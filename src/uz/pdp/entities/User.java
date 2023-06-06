@@ -1,6 +1,8 @@
 package uz.pdp.entities;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private String firstName;
     private String phoneNumber;
@@ -48,6 +50,14 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof User user){
+            return user.phoneNumber.equals(this.phoneNumber) && user.password.equals(this.password);
+        }
+        return false;
     }
 
     @Override
