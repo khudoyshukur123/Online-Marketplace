@@ -62,7 +62,8 @@ public class UserService {
         }
         return true;
     }
-    public User getUser(String phone,String password){
+
+    public User getUser(String phone, String password) {
         for (User user : users) {
             if (user.getPassword().equals(password) && user.getPhoneNumber().equals(phone)) {
                 return user;

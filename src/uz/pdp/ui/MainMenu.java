@@ -1,4 +1,4 @@
-package uz.pdp;
+package uz.pdp.ui;
 
 import uz.pdp.entities.User;
 import uz.pdp.services.UserService;
@@ -6,7 +6,7 @@ import uz.pdp.services.UserService;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class Main {
+public class MainMenu {
     static Scanner scanner;
     static UserService userService = new UserService();
     static User currentUser;
