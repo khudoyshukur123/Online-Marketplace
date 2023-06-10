@@ -1,6 +1,7 @@
 package uz.pdp.services;
 
 import uz.pdp.entities.Ad;
+import uz.pdp.entities.Category;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -8,6 +9,10 @@ import java.util.List;
 
 public class AdService {
     static List<Ad> adList = new ArrayList<>();
+
+    static {
+        adList.add(new Ad("Iphone 12", "brand new iphone 12 for sale", Category.GADGETS, 1, 0));
+    }
 
     public AdService() {
         try (
@@ -17,14 +22,19 @@ public class AdService {
             while (true) {
                 Object ad = input.readObject();
                 if (ad == null) break;
-                adList.add((Ad) ad);
+                if (ad instanceof Ad)
+                    adList.add((Ad) ad);
             }
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    boolean addAdvert(Ad advert) {
+    public static List<Ad> getAdList() {
+        return adList;
+    }
+
+    public boolean addAdvert(Ad advert) {
         adList.add(advert);
         try (
                 FileOutputStream out = new FileOutputStream("src/uz/pdp/db/adDB.txt", true);
@@ -38,7 +48,7 @@ public class AdService {
         return true;
     }
 
-    boolean removeAdvert(int id) {
+    public boolean removeAdvert(int id) {
         Ad ad = getAd(id);
         if (ad == null) return false;
         try (
@@ -54,7 +64,7 @@ public class AdService {
         return true;
     }
 
-    void displayAdvert(int id) {
+    public void displayAdvert(int id) {
         Ad ad = null;
         for (Ad ad1 : adList) {
             if (id == ad1.getId()) {
@@ -71,13 +81,13 @@ public class AdService {
                       """, ad.getTitle(), ad.getDescription(), ad.getCountOfLikes(), ad.getCategory());
     }
 
-    boolean changeAdver(int id, Ad changedAdvert) {
+    public boolean changeAdver(int id, Ad changedAdvert) {
         removeAdvert(id);
         addAdvert(changedAdvert);
         return true;
     }
 
-    boolean increLike(int idOfAdvert) {
+    public boolean increLike(int idOfAdvert) {
         Ad ad = getAd(idOfAdvert);
         if (ad == null) return false;
         ad.setCountOfLikes(ad.getCountOfLikes() + 1);
@@ -85,8 +95,8 @@ public class AdService {
     }
 
     private Ad getAd(int idOfAdvert) {
-        for (int i = 0; i < adList.size(); i++) {
-            if (adList.get(i).getId() == idOfAdvert) return adList.get(i);
+        for (Ad ad : adList) {
+            if (ad.getId() == idOfAdvert) return ad;
         }
         return null;
     }

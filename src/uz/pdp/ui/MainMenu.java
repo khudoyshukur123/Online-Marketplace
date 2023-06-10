@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 public class MainMenu {
     static Scanner scanner;
     static UserService userService = new UserService();
-    static User currentUser;
 
     public static void main(String[] args) {
         while (true) {
@@ -22,7 +21,6 @@ public class MainMenu {
             switch (scanner.next()) {
                 case "1" -> register();
                 case "2" -> login();
-
                 case "3" -> {
                     return;
                 }
@@ -45,7 +43,7 @@ public class MainMenu {
         while (true) {
             System.out.print("Enter your phone number: ");
             phone = scanner.next();
-            pattern = Pattern.compile("^(?=.*\\+998)(?=.*9[3|4|5|9|0])(?=.*\\d).{13}");
+            pattern = Pattern.compile("^(?=.*\\+998)(?=.*9[34590])(?=.*\\d).{13}");
             if (!pattern.matcher(phone).matches()) {
                 System.out.println("Wrong phone number");
                 continue;
@@ -65,7 +63,7 @@ public class MainMenu {
         User user = userService.getUser(phone, password);
         if (user != null) {
             System.out.println("You are found in db");
-            currentUser = user;
+            AdMenu.menu(user);
         }
     }
 
@@ -82,7 +80,7 @@ public class MainMenu {
         while (true) {
             System.out.print("Enter your phone number: ");
             phone = scanner.next();
-            pattern = Pattern.compile("^(?=.*\\+998)(?=.*9[3|4|5|9|0])(?=.*\\d).{13}");
+            pattern = Pattern.compile("^(?=.*\\+998)(?=.*9[34590])(?=.*\\d).{13}");
             if (!pattern.matcher(phone).matches()) {
                 System.out.println("Wrong phone number");
                 continue;
@@ -100,7 +98,10 @@ public class MainMenu {
             break;
         }
         User user = new User(name, phone, password);
-        if (userService.addUser(user)) System.out.println("You have successfully registered");
+        if (userService.addUser(user)) {
+            System.out.println("You have successfully registered");
+            AdMenu.menu(user);
+        }
         else System.out.println("error");
     }
 
