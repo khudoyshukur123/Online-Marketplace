@@ -2,9 +2,13 @@ package uz.pdp.services;
 
 import uz.pdp.entities.User;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class UserService {
     static List<User> users;
@@ -26,8 +30,8 @@ public class UserService {
     }
 
     public boolean addUser(User user) {
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getPhoneNumber().equals(user.getPhoneNumber())) {
+        for (User value : users) {
+            if (value.getEmail().equals(user.getEmail())) {
                 return false;
             }
         }
@@ -65,10 +69,40 @@ public class UserService {
 
     public User getUser(String phone, String password) {
         for (User user : users) {
-            if (user.getPassword().equals(password) && user.getPhoneNumber().equals(phone)) {
+            if (user.getPassword().equals(password) && user.getEmail().equals(phone)) {
                 return user;
             }
         }
         return null;
+    }
+
+    public void sendEmail(User user) throws MessagingException {
+        Properties properties = new Properties();
+        properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.starttls.enable","true");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.auth", "true");
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(
+                        "mail@gmail.com",
+                        "passcode"
+                );
+            }
+        });
+
+        Message message = new MimeMessage(session);
+
+        message.setSubject("the subject");
+        message.setText("this is the text");
+        message.setFrom(new InternetAddress("dontreply@gmail.com"));
+        message.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
+
+        Transport.send(message);
+        System.out.println("OK");
+
     }
 }

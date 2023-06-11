@@ -3,6 +3,7 @@ package uz.pdp.ui;
 import uz.pdp.entities.User;
 import uz.pdp.services.UserService;
 
+import javax.mail.MessagingException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -10,7 +11,7 @@ public class MainMenu {
     static Scanner scanner;
     static UserService userService = new UserService();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws MessagingException {
         while (true) {
             scanner = new Scanner(System.in);
             System.out.print("""
@@ -30,7 +31,7 @@ public class MainMenu {
     }
 
     private static void login() {
-        String phone, password;
+        String email, password;
         Scanner scanner1 = new Scanner(System.in);
         scanner = new Scanner(System.in);
         System.out.print("Enter your name: ");
@@ -41,11 +42,11 @@ public class MainMenu {
         }
         Pattern pattern;
         while (true) {
-            System.out.print("Enter your phone number: ");
-            phone = scanner.next();
-            pattern = Pattern.compile("^(?=.*\\+998)(?=.*9[34590])(?=.*\\d).{13}");
-            if (!pattern.matcher(phone).matches()) {
-                System.out.println("Wrong phone number");
+            System.out.print("Enter your email: ");
+            email = scanner.next();
+            pattern = Pattern.compile("^(\\w{3,})@([\\w-]{2,})\\.(\\w){2,6}$");
+            if (!pattern.matcher(email).matches()) {
+                System.out.println("Wrong email");
                 continue;
             }
             break;
@@ -60,7 +61,7 @@ public class MainMenu {
             }
             break;
         }
-        User user = userService.getUser(phone, password);
+        User user = userService.getUser(email, password);
         if (user != null) {
             System.out.println("You are found in db");
             AdMenu.menu(user);
@@ -68,7 +69,7 @@ public class MainMenu {
     }
 
     private static void register() {
-        String name, phone, password;
+        String name, email, password;
         Scanner scanner1 = new Scanner(System.in);
         System.out.print("Enter your name: ");
         name = scanner1.nextLine();
@@ -78,11 +79,11 @@ public class MainMenu {
         }
         Pattern pattern;
         while (true) {
-            System.out.print("Enter your phone number: ");
-            phone = scanner.next();
-            pattern = Pattern.compile("^(?=.*\\+998)(?=.*9[34590])(?=.*\\d).{13}");
-            if (!pattern.matcher(phone).matches()) {
-                System.out.println("Wrong phone number");
+            System.out.print("Enter your email: ");
+            email = scanner.next();
+            pattern = Pattern.compile("^(\\w{3,})@([\\w-]{2,})\\.(\\w){2,6}$");
+            if (!pattern.matcher(email).matches()) {
+                System.out.println("Wrong email");
                 continue;
             }
             break;
@@ -97,12 +98,17 @@ public class MainMenu {
             }
             break;
         }
-        User user = new User(name, phone, password);
+        User user = new User(name, email, password);
         if (userService.addUser(user)) {
             System.out.println("You have successfully registered");
+            System.out.println("We have sent you email pls check there is surprise for you!!!");
+            try {
+                userService.sendEmail(user);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
             AdMenu.menu(user);
-        }
-        else System.out.println("error");
+        } else System.out.println("error");
     }
 
 }

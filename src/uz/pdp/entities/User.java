@@ -1,72 +1,36 @@
 package uz.pdp.entities;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class User implements Serializable {
 
+    static int temp;
     private String firstName;
-    private String phoneNumber;
+    private String email;
     private String password;
     private int id;
 
-    public User(String firstName, String phoneNumber, String password) {
+    public User(String firstName, String email, String password) {
         this.firstName = firstName;
-        this.phoneNumber = phoneNumber;
+        this.email = email;
         this.password = password;
-        id++;
+        temp++;
+        id = temp;
     }
 
     public User() {
-        id++;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        temp++;
+        id = temp;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof User user){
-            return user.phoneNumber.equals(this.phoneNumber) && user.password.equals(this.password);
+        if (obj instanceof User user) {
+            return user.email.equals(this.email) && user.password.equals(this.password);
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "firstName='" + firstName + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", password='" + password + '\'' +
-                ", id=" + id +
-                '}';
     }
 }
