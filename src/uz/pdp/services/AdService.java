@@ -72,7 +72,10 @@ public class AdService {
                 break;
             }
         }
-        if (ad == null) System.out.println("No such advertisement");
+        if (ad == null){
+            System.out.println("No such advertisement");
+            return;
+        }
         System.out.printf("""
                 ------------%s------------
                       %s

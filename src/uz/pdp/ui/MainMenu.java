@@ -1,5 +1,6 @@
 package uz.pdp.ui;
 
+import lombok.SneakyThrows;
 import uz.pdp.entities.User;
 import uz.pdp.services.UserService;
 
@@ -100,12 +101,12 @@ public class MainMenu {
         }
         User user = new User(name, email, password);
         if (userService.addUser(user)) {
-            System.out.println("We have sent you email pls check there is surprise for you!!!");
+            System.out.println("We have sent you email pls check");
             Random random = new Random();
             String passcode = String.valueOf(random.nextInt(9999) + 1000);
             new Thread(() -> {
                 try {
-                    System.out.println("Sending message to your email...");
+                    System.out.println("Sending message to the email...");
                     userService.sendEmail(user, passcode);
                 } catch (Exception e) {
                     System.out.println("Something went wrong!");

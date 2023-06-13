@@ -12,18 +12,18 @@ public class Ad {
     private int user_id;
     private int countOfLikes;
 
-    public Ad(String title,String description, Category category, int user_id, int countOfLikes) {
-        this.title=title;
+    public Ad(String title, String description, Category category, int user_id, int countOfLikes) {
+        this.title = title;
         this.description = description;
         this.category = category;
         this.user_id = user_id;
         this.countOfLikes = countOfLikes;
         temp++;
-        id=temp;
+        id = temp;
     }
 
     public Ad() {
         temp++;
-        id=temp;
+        id = temp;
     }
 }

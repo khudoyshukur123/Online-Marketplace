@@ -43,7 +43,7 @@ public class AdMenu {
                 System.out.println(ad.getTitle()+"ID: "+ad.getId());
             }
         }
-        System.out.print("Enter the id of the advert that you like: ");
+        System.out.print("Enter the id of the advert that you like to explore: ");
         int id = scannerInt.nextInt();
         adService.displayAdvert(id);
     }
