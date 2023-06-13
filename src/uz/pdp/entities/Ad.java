@@ -1,6 +1,5 @@
 package uz.pdp.entities;
 
-import com.github.javafaker.Cat;
 import lombok.Data;
 
 @Data

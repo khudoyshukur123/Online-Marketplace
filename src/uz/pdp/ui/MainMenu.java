@@ -3,7 +3,7 @@ package uz.pdp.ui;
 import uz.pdp.entities.User;
 import uz.pdp.services.UserService;
 
-import javax.mail.MessagingException;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -11,7 +11,7 @@ public class MainMenu {
     static Scanner scanner;
     static UserService userService = new UserService();
 
-    public static void main(String[] args) throws MessagingException {
+    public static void main(String[] args) {
         while (true) {
             scanner = new Scanner(System.in);
             System.out.print("""
@@ -100,14 +100,23 @@ public class MainMenu {
         }
         User user = new User(name, email, password);
         if (userService.addUser(user)) {
-            System.out.println("You have successfully registered");
             System.out.println("We have sent you email pls check there is surprise for you!!!");
-            try {
-                userService.sendEmail(user);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
+            Random random = new Random();
+            String passcode = String.valueOf(random.nextInt(9999) + 1000);
+            new Thread(() -> {
+                try {
+                    System.out.println("Sending message to your email...");
+                    userService.sendEmail(user, passcode);
+                } catch (Exception e) {
+                    System.out.println("Something went wrong!");
+                }
+            }).start();
+            System.out.print("Please enter the code that is sent to your email: ");
+            String passcodeIn = scanner1.nextLine();
+            if (passcodeIn.equals(passcode)) {
+                System.out.println("You have successfully registered and authentificated!!!");
+                AdMenu.menu(user);
             }
-            AdMenu.menu(user);
         } else System.out.println("error");
     }
 
