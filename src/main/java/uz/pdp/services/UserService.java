@@ -17,7 +17,7 @@ public class UserService {
     public UserService() {
         users = new ArrayList<>();
         try (
-                FileInputStream in = new FileInputStream("src/uz/pdp/db/usersDB.txt");
+                FileInputStream in = new FileInputStream("src/main/resources/usersDB.txt");
                 ObjectInput input = new ObjectInputStream(in)
         ) {
             while (true) {
@@ -37,7 +37,7 @@ public class UserService {
             }
         }
         try (
-                FileOutputStream out = new FileOutputStream("src/uz/pdp/db/usersDB.txt", true);
+                FileOutputStream out = new FileOutputStream("src/main/resources/usersDB.txt", true);
                 ObjectOutput output = new ObjectOutputStream(out)
         ) {
             users.add(user);
@@ -76,7 +76,7 @@ public class UserService {
         return null;
     }
 
-    public void sendEmail(User user, String passcode) throws MessagingException {
+    public void sendEmail(User user, String passcode) {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "465");
@@ -87,27 +87,56 @@ public class UserService {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication("khudoshukur7@gmail.com",
-                        "somecode");
+                        "password");
             }
         });
 
         Message message = new MimeMessage(session);
         try {
             message.setSubject("Online Marketplace");
-
-            String content = "Welcome " + user.getFirstName() + " to our platform!"
-                    + "\n We hope that you will find the good bargains here and help other people by offering great deal."
-                    + "\n So what are you waiting for? Let's get started by configuring your profile. Click the link to get started"
-                    + ". By the way here is your passcode to help you register: " + passcode;
-            String html = """
-                    <html>
-                    <body>
+            String html1 = """
+                    <!DOCTYPE html>
+                    <html lang="en">                \s
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Document</title>
+                        <style>
+                            #parg {
+                                background-color: lightblue;
+                                color: black;
+                                padding: 40px;
+                                text-align: center;
+                            }
+                            #pass{
+                                font-size: 30px;
+                            }
+                        </style>
+                    </head>
                                         
-                    </body>
-                    </html>
-                    """;
-            message.setContent("<html><body><table width=\"100%\" height=\"90%\" border=\"0\" cellspacing=\"0\" cellpadding=\"20\" background=\"https://ttslemc.tatatel.co.in/EMC_FEEDBACK/imagepool/indicom_logo.jpg\"><tr><td><p>this is message</p></td></tr></table></body></html>",
-                    "text/html");
+                    <body>
+                            <p id="parg">Verify your new Online Marketplace account</p>
+                            <p>To verify your email address, please use the following One Time Password (OTP):</p>
+                            <p id="pass">""";
+            String html2 = """
+                            </p>
+                            <p>
+                                Do not share this OTP with anyone. Online Marketplace takes your account security very seriously. Online Marketplace Customer
+                                Service will never<br>
+                                ask you to disclose or verify your Online Marketplace password, OTP, credit card, or banking account number. If you
+                                receive a<br>
+                                suspicious email with a link to update your account information, do not click on the link—instead, report
+                                the email to<br>
+                                Online Marketplace for investigation.     
+                                <b>Thank you!</b>
+                                <table width="100%" height="100" cellspacing="0" cellpadding="20"
+                            background="https://media.istockphoto.com/id/1331579485/vector/background-curved-light-blue.jpg?s=612x612&w=0&k=20&c=Wslr-PIxcQDoxXmzC7_w8rbFM9_s_5Jz99tE3ftNM1A="
+                            ></table>
+                            </p>
+                    </body>          
+                    </html>""";
+            message.setContent(html1 + passcode + html2, "text/html");
             message.setFrom(new InternetAddress("dontreply@gmail.com"));
             String email = user.getEmail();
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
@@ -116,6 +145,5 @@ public class UserService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

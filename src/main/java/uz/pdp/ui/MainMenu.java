@@ -1,6 +1,5 @@
 package uz.pdp.ui;
 
-import lombok.SneakyThrows;
 import uz.pdp.entities.User;
 import uz.pdp.services.UserService;
 
@@ -12,7 +11,7 @@ public class MainMenu {
     static Scanner scanner;
     static UserService userService = new UserService();
 
-    public static void main(String[] args) {
+    public static void mainMenu() {
         while (true) {
             scanner = new Scanner(System.in);
             System.out.print("""
