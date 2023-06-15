@@ -2,6 +2,7 @@ package uz.pdp.ui;
 
 import uz.pdp.entities.User;
 import uz.pdp.services.UserService;
+import uz.pdp.services.UserServiceImpl;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -9,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class MainMenu {
     static Scanner scanner;
-    static UserService userService = new UserService();
+    static UserService userService = new UserServiceImpl();
 
     public static void mainMenu() {
         while (true) {

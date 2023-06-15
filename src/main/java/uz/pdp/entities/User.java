@@ -9,6 +9,7 @@ public class User implements Serializable {
 
     static int temp;
     private String firstName;
+    private String nickName;
     private String email;
     private String password;
     private int id;
@@ -17,6 +18,7 @@ public class User implements Serializable {
         this.firstName = firstName;
         this.email = email;
         this.password = password;
+        this.nickName=firstName;
         temp++;
         id = temp;
     }

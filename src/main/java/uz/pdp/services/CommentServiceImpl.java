@@ -2,17 +2,15 @@ package uz.pdp.services;
 
 import uz.pdp.entities.Comment;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.time.format.DateTimeFormatter;
 
-public class CommentServiceImpl implements CommentService{
-    UserService userService=new UserService();
+public class CommentServiceImpl implements CommentService {
+    UserService userService = new UserServiceImpl();
+
     public CommentServiceImpl() {
         try (
-                FileInputStream in = new FileInputStream("src/main/resources/commentsDB.txt");
+                FileInputStream in = new FileInputStream(commentsPath);
                 ObjectInput input = new ObjectInputStream(in)
         ) {
             while (true) {
@@ -27,13 +25,24 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public boolean addComment(Comment comment) {
-        return comments.add(comment);
+        try (
+                FileOutputStream out = new FileOutputStream(commentsPath, true);
+                ObjectOutput output = new ObjectOutputStream(out)
+        ) {
+            comments.add(comment);
+            output.writeObject(comment);
+        } catch (IOException e) {
+            System.out.println("Exception has happened");
+            return false;
+        }
+        return true;
     }
+
 
     @Override
     public boolean removeComment(int id) {
         for (Comment comment : comments) {
-            if (comment.getId()==id) {
+            if (comment.getId() == id) {
                 return comments.remove(comment);
             }
         }
@@ -43,7 +52,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public Comment getComment(int id) {
         for (Comment comment : comments) {
-            if (comment.getId()==id) {
+            if (comment.getId() == id) {
                 return comment;
             }
         }
@@ -54,9 +63,9 @@ public class CommentServiceImpl implements CommentService{
     public void displayComment(int adId) {
         for (int i = 0; i < comments.size(); i++) {
             Comment comment = comments.get(i);
-            if (comment.getAd_id()==adId){
-                System.out.println(comment.getComment_text()+"  "+comment.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")));
-                System.out.println("=======================  ");
+            if (comment.getAd_id() == adId) {
+                System.out.println(comment.getComment_text() + "  " + comment.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")));
+                System.out.println("========================  " + userService.getUser(comment.getUser_id()).getNickName());
             }
         }
     }
