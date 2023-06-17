@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
     public boolean addUser(User user) {
         for (User value : users) {
             if (value.getEmail().equals(user.getEmail())) {
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
     public boolean removeUser(User user) {
         if (!users.contains(user)) {
             return false;
@@ -70,6 +72,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
     public User getUser(String phone, String password) {
         for (User user : users) {
             if (user.getPassword().equals(password) && user.getEmail().equals(phone)) {
@@ -79,6 +82,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
     public void sendEmail(User user, String passcode) {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -90,7 +94,7 @@ public class UserServiceImpl implements UserService {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication("khudoshukur7@gmail.com",
-                        "password");
+                        password);
             }
         });
 

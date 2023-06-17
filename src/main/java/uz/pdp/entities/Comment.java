@@ -2,10 +2,11 @@ package uz.pdp.entities;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class Comment {
+public class Comment implements Serializable {
     private int id;
     private String comment_text;
     private int ad_id;
@@ -14,15 +15,13 @@ public class Comment {
     private int parent_comment_id;
     private LocalDateTime time;
 
-    public Comment(String comment_text, int ad_id, int countOfLikes,int parent_comment_id,LocalDateTime time,int user_id){
+    public Comment(String comment_text, int ad_id, int countOfLikes, int parent_comment_id, LocalDateTime time, int user_id) {
         this.comment_text = comment_text;
         this.ad_id = ad_id;
         this.countOfLikes = countOfLikes;
-        this.parent_comment_id=parent_comment_id;
-        this.time=time;
-        this.user_id=user_id;
+        this.parent_comment_id = parent_comment_id;
+        this.time = time;
+        this.user_id = user_id;
         id++;
     }
-
-
 }

@@ -2,8 +2,10 @@ package uz.pdp.entities;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Ad {
+public class Ad implements Serializable {
     static int temp;
     private int id;
     private String title;

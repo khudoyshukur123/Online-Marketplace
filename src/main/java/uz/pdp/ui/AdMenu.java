@@ -22,7 +22,6 @@ public class AdMenu {
 
     public static void menu(User user) {
         currentUser = user;
-        System.out.println("Welcome to your account, " + currentUser.getFirstName());
         while (true) {
             System.out.println("Categories to explore: ");
             System.out.println("""
@@ -31,7 +30,7 @@ public class AdMenu {
                     3.Clothes
                     4.Back to Main menu
                     """);
-            switch (scanner.next()) {
+            switch (scanner.nextLine()) {
                 case "1" -> printAds(Category.GADGETS);
                 case "2" -> printAds(Category.COSMETICS);
                 case "3" -> printAds(Category.CLOTHES);
@@ -82,9 +81,15 @@ public class AdMenu {
             case "1" -> {
                 System.out.print("Write your comment: ");
                 String cmnt = scanner.nextLine();
-                commentService.addComment(new Comment(cmnt, adId, 0, 0, LocalDateTime.now(),currentUser.getId()));
+                commentService.addComment(new Comment(cmnt, adId, 0, 0, LocalDateTime.now(), currentUser.getId()));
             }
-            case "2" -> {}
+            case "2" -> {
+                System.out.print("which comment you would like to reply (id): ");
+                int idOfParentComment = scannerInt.nextInt();
+                System.out.print("Write your comment: ");
+                String cmnt = scanner.nextLine();
+                commentService.addComment(new Comment(cmnt, adId, 0, idOfParentComment, LocalDateTime.now(), currentUser.getId()));
+            }
             case "3" -> {
                 return;
             }

@@ -1,6 +1,10 @@
 package uz.pdp.ui;
 
+import uz.pdp.Main;
+import uz.pdp.entities.Ad;
 import uz.pdp.entities.User;
+import uz.pdp.services.AdService;
+import uz.pdp.services.AdServiceImpl;
 import uz.pdp.services.UserService;
 import uz.pdp.services.UserServiceImpl;
 
@@ -9,21 +13,27 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class MainMenu {
-    static Scanner scanner;
+    static User currentUser;
+    static Scanner scanner = new Scanner(System.in);
+    static AdService adService = new AdServiceImpl();
     static UserService userService = new UserServiceImpl();
+    static int chances = 3;
 
-    public static void mainMenu() {
+    public static void menu(User user) {
+        currentUser = user;
+        System.out.println("Welcome to your account, " + currentUser.getFirstName());
         while (true) {
-            scanner = new Scanner(System.in);
-            System.out.print("""
-                    1.Register
-                    2.Login
-                    3.Exit
+            System.out.println("""
+                    1.Advertisements Catalogue
+                    2.Managing your advertisements
+                    3.Settings
+                    4.Log out
                     """);
             switch (scanner.next()) {
-                case "1" -> register();
-                case "2" -> login();
-                case "3" -> {
+                case "1" -> AdMenu.menu(currentUser);
+                case "2" -> managementOfAds();
+                case "3" -> settings();
+                case "4" -> {
                     return;
                 }
                 default -> System.out.println("This is not valid command");
@@ -31,95 +41,104 @@ public class MainMenu {
         }
     }
 
-    private static void login() {
-        String email, password;
-        Scanner scanner1 = new Scanner(System.in);
-        scanner = new Scanner(System.in);
-        System.out.print("Enter your name: ");
-        String name = scanner1.nextLine();
-        if (name.isBlank()) {
-            System.out.println("Name cannot be blank");
-            return;
-        }
-        Pattern pattern;
-        while (true) {
-            System.out.print("Enter your email: ");
-            email = scanner.next();
-            pattern = Pattern.compile("^(\\w{3,})@([\\w-]{2,})\\.(\\w){2,6}$");
-            if (!pattern.matcher(email).matches()) {
-                System.out.println("Wrong email");
-                continue;
+    private static void settings() {
+        System.out.println("""
+                1.Changing your name
+                2.Changing your password
+                3.Changing your email
+                4.Your comments
+                5.Back
+                """);
+        switch (scanner.next()) {
+            case "1" -> changeName();
+            case "2" -> changePassword();
+            case "3" -> changeEmail();
+            case "4" -> commentSection();
+            case "5" -> {
+                return;
             }
-            break;
-        }
-        while (true) {
-            System.out.print("Enter your password: ");
-            password = scanner.next();
-            pattern = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%&*<>])(?=.*[a-z]).{8,}$");
-            if (!pattern.matcher(password).matches()) {
-                System.out.println("Enter strong password");
-                continue;
-            }
-            break;
-        }
-        User user = userService.getUser(email, password);
-        if (user != null) {
-            System.out.println("You are found in db");
-            AdMenu.menu(user);
+            default -> System.out.println("This is not valid command");
         }
     }
 
-    private static void register() {
-        String name, email, password;
-        Scanner scanner1 = new Scanner(System.in);
-        System.out.print("Enter your name: ");
-        name = scanner1.nextLine();
-        if (name.isBlank()) {
-            System.out.println("Name cannot be blank");
-            return;
-        }
-        Pattern pattern;
-        while (true) {
-            System.out.print("Enter your email: ");
-            email = scanner.next();
-            pattern = Pattern.compile("^(\\w{3,})@([\\w-]{2,})\\.(\\w){2,6}$");
-            if (!pattern.matcher(email).matches()) {
+    private static void changeEmail() {
+        String oldEmail;
+        System.out.println("Are you sure you want to change your email: ");
+        System.out.print("Y/N: ");
+        String ans = scanner.nextLine();
+        if (ans.equalsIgnoreCase("Y")) {
+            oldEmail = currentUser.getEmail();
+            System.out.print("Enter your new email address: ");
+            String newEmail = scanner.nextLine();
+            Pattern pattern = Pattern.compile("^(\\w{3,})@([\\w-]{2,})\\.(\\w){2,6}$");
+            if (!pattern.matcher(newEmail).matches()) {
                 System.out.println("Wrong email");
-                continue;
+                return;
             }
-            break;
-        }
-        while (true) {
-            System.out.print("Enter your password: ");
-            password = scanner.next();
-            pattern = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%&*<>])(?=.*[a-z]).{8,}$");
-            if (!pattern.matcher(password).matches()) {
-                System.out.println("Enter strong password");
-                continue;
-            }
-            break;
-        }
-        User user = new User(name, email, password);
-        if (userService.addUser(user)) {
-            System.out.println("We have sent you email pls check");
+            currentUser.setEmail(newEmail);
             Random random = new Random();
             String passcode = String.valueOf(random.nextInt(9999) + 1000);
-            new Thread(() -> {
-                try {
-                    System.out.println("Sending message to the email...");
-                    userService.sendEmail(user, passcode);
-                } catch (Exception e) {
-                    System.out.println("Something went wrong!");
-                }
-            }).start();
+            userService.sendEmail(currentUser, passcode);
+            System.out.println("We have sent you email pls check");
             System.out.print("Please enter the code that is sent to your email: ");
-            String passcodeIn = scanner1.nextLine();
-            if (passcodeIn.equals(passcode)) {
-                System.out.println("You have successfully registered and authentificated!!!");
-                AdMenu.menu(user);
+            String input = scanner.nextLine();
+            if (passcode.equals(input))
+                System.out.println("You have successfully changed you email to " + newEmail);
+            else {
+                currentUser.setEmail(oldEmail);
+                System.out.println("error");
             }
-        } else System.out.println("error");
+        }
     }
 
-}
+    private static void changePassword() {
+        String oldPass;
+        System.out.println("Are you sure you want to change your password: ");
+        System.out.print("Y/N: ");
+        String ans = scanner.nextLine();
+        if (ans.equalsIgnoreCase("Y")) {
+            System.out.print("Enter your current password: ");
+            String temp = scanner.nextLine();
+            if (!temp.equals(currentUser.getPassword())) {
+                chances--;
+                if (chances == 0) Main.stopApp("You have tried more than given chances");
+                System.out.println("Wrong password: You have got " + chances + "to try");
+            }
+            System.out.print("Enter your new Password: ");
+            String newPassword = scanner.nextLine();
+            Pattern pattern = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%&*<>])(?=.*[a-z]).{8,}$");
+            if (pattern.matcher(newPassword).matches()) {
+                currentUser.setPassword(newPassword);
+                System.out.println("You have successfully changed you Password to " + newPassword);
+                return;
+            }
+            System.out.println("Something went wrong. Try again.");
+        }
+    }
 
+
+    private static void changeName() {
+        System.out.println("Are you sure you want to change your NickName: ");
+        System.out.print("Y/N: ");
+        String ans = scanner.nextLine();
+        if (ans.equalsIgnoreCase("Y")) {
+            System.out.print("Enter your new NickName: ");
+            String name = scanner.nextLine();
+            if (name.isBlank()) {
+                currentUser.setNickName(name);
+                System.out.println("You have successfully changed your NickName to " + name);
+            }
+        }
+    }
+
+    private static void commentSection() {
+
+    }
+
+    private static void managementOfAds() {
+        for (Ad ad : AdServiceImpl.getAdList()) {
+            if (ad.getUser_id() == currentUser.getId())
+                adService.displayAdvert(ad.getId());
+        }
+    }
+}

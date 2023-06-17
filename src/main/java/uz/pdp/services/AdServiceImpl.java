@@ -29,6 +29,10 @@ public class AdServiceImpl implements AdService {
         }
     }
 
+    public static List<Ad> getAdList() {
+        return adList;
+    }
+
     public boolean addAdvert(Ad advert) {
         adList.add(advert);
         try (
@@ -43,6 +47,7 @@ public class AdServiceImpl implements AdService {
         return true;
     }
 
+    @Override
     public boolean removeAdvert(int id) {
         Ad ad = getAd(id);
         if (ad == null) return false;
@@ -59,6 +64,7 @@ public class AdServiceImpl implements AdService {
         return true;
     }
 
+    @Override
     public void displayAdvert(int id) {
         Ad ad = null;
         for (Ad ad1 : adList) {
@@ -79,16 +85,14 @@ public class AdServiceImpl implements AdService {
                       """, ad.getTitle(), ad.getDescription(), ad.getCountOfLikes(), ad.getCategory());
     }
 
+    @Override
     public boolean changeAdver(int id, Ad changedAdvert) {
         removeAdvert(id);
         addAdvert(changedAdvert);
         return true;
     }
 
-    public static List<Ad> getAdList() {
-        return adList;
-    }
-
+    @Override
     public boolean increLike(int idOfAdvert) {
         Ad ad = getAd(idOfAdvert);
         if (ad == null) return false;

@@ -61,10 +61,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void displayComment(int adId) {
-        for (int i = 0; i < comments.size(); i++) {
-            Comment comment = comments.get(i);
+        for (Comment comment : comments) {
+            for (int i = 0; i <comment.getParent_comment_id(); i++) {
+                System.out.print("      ");
+            }
             if (comment.getAd_id() == adId) {
-                System.out.println(comment.getComment_text() + "  " + comment.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")));
+                System.out.println(comment.getComment_text() + "  " + comment.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm"))+", id: "+comment.getId());
                 System.out.println("========================  " + userService.getUser(comment.getUser_id()).getNickName());
             }
         }

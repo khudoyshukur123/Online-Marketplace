@@ -1,18 +1,16 @@
 package uz.pdp;
 
-import uz.pdp.entities.Comment;
-import uz.pdp.services.CommentService;
-import uz.pdp.services.CommentServiceImpl;
-import uz.pdp.ui.MainMenu;
-
-import java.time.LocalDateTime;
+import lombok.SneakyThrows;
+import uz.pdp.exceptions.ForcedAppException;
+import uz.pdp.ui.Entrance;
 
 public class Main {
     public static void main(String[] args) {
-        MainMenu.mainMenu();
-//        CommentService commentService = new CommentServiceImpl();
-//        Comment djf = new Comment("this is comment", 1, 0, 0, LocalDateTime.now());
-//        commentService.addComment(djf);
-//        commentService.displayComment(1);
+        Entrance.mainMenu();
+    }
+    @SneakyThrows
+    public static void stopApp(String msg){
+        System.out.println(msg);
+        throw new ForcedAppException(msg);
     }
 }
