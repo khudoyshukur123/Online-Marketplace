@@ -4,6 +4,7 @@ import uz.pdp.entities.Comment;
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class CommentServiceImpl implements CommentService {
     UserService userService = new UserServiceImpl();
@@ -22,6 +23,8 @@ public class CommentServiceImpl implements CommentService {
 
         }
     }
+
+
 
     @Override
     public boolean addComment(Comment comment) {
@@ -62,11 +65,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void displayComment(int adId) {
         for (Comment comment : comments) {
-            if (comment.getAd_id() == adId && comment.getParent_comment_id() == 0) {
-                System.out.println(comment.getComment_text() + "  " + comment.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")) + ", id: " + comment.getId());
-                System.out.println("========================  " + userService.getUser(comment.getUser_id()).getNickName());
-                displayChildComments(comment);
-            }
+//            if (comment.getAd_id() == adId && comment.getParent_comment_id() == 0) {
+            System.out.println(comment.getComment_text() + "  " + comment.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")) + ", id: " + comment.getId());
+            System.out.println("========================  " + userService.getUser(comment.getUser_id()).getNickName());
+//                displayChildComments(comment);
+//            }
         }
     }
 
@@ -78,7 +81,6 @@ public class CommentServiceImpl implements CommentService {
                 System.out.println(sb + child.getComment_text() + "  " + child.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")) + ", id: " + child.getId());
                 System.out.println(sb + "========================  " + userService.getUser(child.getUser_id()).getNickName());
                 sb.setLength(0);
-//                displayChildComments(child);
             }
         }
     }

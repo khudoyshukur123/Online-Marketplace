@@ -2,6 +2,7 @@ package uz.pdp.services;
 
 import uz.pdp.entities.Ad;
 import uz.pdp.entities.Category;
+import uz.pdp.entities.User;
 
 import java.io.*;
 import java.util.List;
@@ -100,7 +101,7 @@ public class AdServiceImpl implements AdService {
         return true;
     }
 
-    private Ad getAd(int idOfAdvert) {
+    public Ad getAd(int idOfAdvert) {
         for (Ad ad : adList) {
             if (ad.getId() == idOfAdvert) return ad;
         }

@@ -11,6 +11,9 @@ public interface CommentService {
     boolean addComment(Comment comment);
     boolean removeComment(int id);
     Comment getComment(int id);
+    static List<Comment> getComments() {
+        return comments;
+    }
     void displayComment(int adId);
 
 }

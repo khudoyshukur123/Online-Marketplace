@@ -2,11 +2,10 @@ package uz.pdp.ui;
 
 import uz.pdp.Main;
 import uz.pdp.entities.Ad;
+import uz.pdp.entities.Category;
+import uz.pdp.entities.Comment;
 import uz.pdp.entities.User;
-import uz.pdp.services.AdService;
-import uz.pdp.services.AdServiceImpl;
-import uz.pdp.services.UserService;
-import uz.pdp.services.UserServiceImpl;
+import uz.pdp.services.*;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -15,8 +14,10 @@ import java.util.regex.Pattern;
 public class MainMenu {
     static User currentUser;
     static Scanner scanner = new Scanner(System.in);
+    static Scanner scannerInt = new Scanner(System.in);
     static AdService adService = new AdServiceImpl();
     static UserService userService = new UserServiceImpl();
+    static CommentService commentService = new CommentServiceImpl();
     static int chances = 3;
 
     public static void menu(User user) {
@@ -42,22 +43,24 @@ public class MainMenu {
     }
 
     private static void settings() {
-        System.out.println("""
-                1.Changing your name
-                2.Changing your password
-                3.Changing your email
-                4.Your comments
-                5.Back
-                """);
-        switch (scanner.next()) {
-            case "1" -> changeName();
-            case "2" -> changePassword();
-            case "3" -> changeEmail();
-            case "4" -> commentSection();
-            case "5" -> {
-                return;
+        while (true) {
+            System.out.println("""
+                    1.Changing your name
+                    2.Changing your password
+                    3.Changing your email
+                    4.Your comments
+                    5.Back
+                    """);
+            switch (scanner.next()) {
+                case "1" -> changeName();
+                case "2" -> changePassword();
+                case "3" -> changeEmail();
+                case "4" -> commentSection();
+                case "5" -> {
+                    return;
+                }
+                default -> System.out.println("This is not valid command");
             }
-            default -> System.out.println("This is not valid command");
         }
     }
 
@@ -132,13 +135,91 @@ public class MainMenu {
     }
 
     private static void commentSection() {
-
+        System.out.println("Your comments: ");
+        for (Comment comment : CommentService.getComments()) {
+            if (comment.getUser_id() == currentUser.getId()) {
+                System.out.println(comment);
+            }
+        }
     }
 
     private static void managementOfAds() {
+        boolean hasAds = false;
         for (Ad ad : AdServiceImpl.getAdList()) {
-            if (ad.getUser_id() == currentUser.getId())
+            if (ad.getUser_id() == currentUser.getId()) {
                 adService.displayAdvert(ad.getId());
+                hasAds = true;
+            }
         }
+        if (!hasAds) {
+            System.out.println("You have no any advertisements published.");
+            System.out.print("Do you want to add advertisement ? (Y/N): ");
+            String response = scanner.nextLine();
+            if (response.equalsIgnoreCase("y")) addAdvert();
+            else return;
+        }
+        while (true) {
+            System.out.println("""
+                    Please choose one of them
+                    1.Adding another advertisement to the site
+                    2.Removing one of your advertisement from the site
+                    3.Exit
+                    """);
+            switch (scanner.next()) {
+                case "1" -> addAdvert();
+                case "2" -> removeAdvert();
+                case "3" -> {
+                    return;
+                }
+                default -> System.out.println("This is not valid command");
+            }
+        }
+    }
+
+    private static void removeAdvert() {
+        System.out.print("Enter the id of the advertisement that you want to remove: ");
+        int id = scannerInt.nextInt();
+        if (adService.getAd(id).getUser_id() == currentUser.getId()) {
+            adService.removeAdvert(id);
+            System.out.println("You have successfully deleted your ad");
+        } else System.out.println("Something went wrong!");
+    }
+
+    private static void addAdvert() {
+        String title, description;
+        Category category;
+        while (true) {
+            System.out.print("Enter your title for the ad (it should not exceed 50 chars): ");
+            title = scanner.nextLine();
+            if (title.toCharArray().length > 50) {
+                System.out.println("Your title should not be more than 50 characters!!!");
+            }
+            break;
+        }
+        System.out.print("Enter your description for the ad: ");
+        description = scanner.nextLine();
+        if (title.toCharArray().length > 50) {
+            System.out.println("Your title should not be more than 50 characters!!!");
+        }
+        while (true) {
+            System.out.println("""
+                    Enter the catogory of the good:
+                    1.Gadgets
+                    2.Cosmetics
+                    3.Clothes
+                    """);
+            switch (scannerInt.nextInt()) {
+                case 1 -> category = Category.GADGETS;
+                case 2 -> category = Category.COSMETICS;
+                case 3 -> category = Category.CLOTHES;
+                default -> {
+                    System.out.println("Something went wrong!");
+                    continue;
+                }
+            }
+            break;
+        }
+        adService.addAdvert(new Ad(title, description, category, currentUser.getId(), 0));
+        System.out.println("You have successfully added new ad to the site!!!");
     }
 }
