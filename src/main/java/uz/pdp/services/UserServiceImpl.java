@@ -6,6 +6,9 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Properties;
 
 
@@ -93,7 +96,7 @@ public class UserServiceImpl implements UserService {
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("khudoshukur7@gmail.com",
+                return new PasswordAuthentication(senderEmail,
                         password);
             }
         });
@@ -101,55 +104,18 @@ public class UserServiceImpl implements UserService {
         Message message = new MimeMessage(session);
         try {
             message.setSubject("Online Marketplace");
-            String html1 = """
-                    <!DOCTYPE html>
-                    <html lang="en">                \s
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Document</title>
-                        <style>
-                            #parg {
-                                background-color: lightblue;
-                                color: black;
-                                padding: 40px;
-                                text-align: center;
-                            }
-                            #pass{
-                                font-size: 30px;
-                            }
-                        </style>
-                    </head>
-                                        
-                    <body>
-                            <p id="parg">Verify your new Online Marketplace account</p>
-                            <p>To verify your email address, please use the following One Time Password (OTP):</p>
-                            <p id="pass">""";
-            String html2 = """
-                            </p>
-                            <p>
-                                Do not share this OTP with anyone. Online Marketplace takes your account security very seriously. Online Marketplace Customer
-                                Service will never<br>
-                                ask you to disclose or verify your Online Marketplace password, OTP, credit card, or banking account number. If you
-                                receive a<br>
-                                suspicious email with a link to update your account information, do not click on the link—instead, report
-                                the email to<br>
-                                Online Marketplace for investigation.     
-                                <b>Thank you!</b>
-                                <table width="100%" height="100" cellspacing="0" cellpadding="20"
-                            background="https://media.istockphoto.com/id/1331579485/vector/background-curved-light-blue.jpg?s=612x612&w=0&k=20&c=Wslr-PIxcQDoxXmzC7_w8rbFM9_s_5Jz99tE3ftNM1A="
-                            ></table>
-                            </p>
-                    </body>          
-                    </html>""";
-            message.setContent(html1 + passcode + html2, "text/html");
+            ArrayList<String> emailBody = (ArrayList<String>) Files.readAllLines(Path.of(emailPath));
+            var sb = new StringBuilder();
+            for (String s : emailBody) {
+                if (s.contains("%s")) sb.append(s.formatted(String.valueOf(passcode))).append("\n");
+                else sb.append(s).append("\n");
+            }
+            message.setContent(sb.toString(), "text/html");
             message.setFrom(new InternetAddress("dontreply@gmail.com"));
             String email = user.getEmail();
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
-
             Transport.send(message);
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException e) {
             throw new RuntimeException(e);
         }
     }

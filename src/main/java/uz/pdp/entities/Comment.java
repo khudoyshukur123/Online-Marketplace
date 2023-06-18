@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class Comment implements Serializable {
+    static int temp=0;
     private int id;
     private String comment_text;
     private int ad_id;
@@ -22,6 +23,7 @@ public class Comment implements Serializable {
         this.parent_comment_id = parent_comment_id;
         this.time = time;
         this.user_id = user_id;
-        id++;
+        temp++;
+        id=temp;
     }
 }

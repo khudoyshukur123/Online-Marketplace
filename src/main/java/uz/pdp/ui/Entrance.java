@@ -33,15 +33,7 @@ public class Entrance {
 
     private static void login() {
         String email, password;
-        Scanner scanner1 = new Scanner(System.in);
         scanner = new Scanner(System.in);
-        System.out.print("Enter your name: ");
-        String name = scanner1.nextLine();
-        if (name.isBlank()) {
-            System.out.println("Name cannot be blank");
-            return;
-        }
-
         Pattern pattern;
         while (true) {
             System.out.print("Enter your email: ");
