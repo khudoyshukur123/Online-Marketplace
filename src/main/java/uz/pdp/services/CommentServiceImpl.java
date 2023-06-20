@@ -35,13 +35,18 @@ public class CommentServiceImpl implements CommentService {
     public boolean addComment(Comment comment) {
         try (
                 FileOutputStream out = new FileOutputStream(commentsPath);
-                ObjectOutput output = new ObjectOutputStream(out)
+                ObjectOutput output = new ObjectOutputStream(out);
+                FileInputStream in = new FileInputStream(commentsPath);
+                ObjectInput input = new ObjectInputStream(in)
         ) {
             comments.add(comment);
             output.writeObject(comments);
+            comments = (List<Comment>) input.readObject();
         } catch (IOException e) {
             System.out.println("Exception has happened in addComment");
             return false;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return true;
     }

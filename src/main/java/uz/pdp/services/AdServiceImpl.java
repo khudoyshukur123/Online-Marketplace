@@ -1,47 +1,42 @@
 package uz.pdp.services;
 
 import uz.pdp.entities.Ad;
-import uz.pdp.entities.Category;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdServiceImpl implements AdService {
-
-    static {
-        adList.add(new Ad("Iphone 12", "brand new iphone 12 for sale", Category.GADGETS, 1, 0));
-    }
-
+    List<Ad> adList;
 
     public AdServiceImpl() {
         try (
                 FileInputStream in = new FileInputStream(adListPath);
                 ObjectInput input = new ObjectInputStream(in)
         ) {
-            while (true) {
-                Object ad = input.readObject();
-                if (ad == null) break;
-                if (ad instanceof Ad)
-                    adList.add((Ad) ad);
-            }
+            Object ads = input.readObject();
+            adList = (List<Ad>) ads;
+        } catch (EOFException e) {
+            adList = new ArrayList<>();
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
-    public static List<Ad> getAdList() {
+    public List<Ad> getAdList() {
         return adList;
     }
 
     public boolean addAdvert(Ad advert) {
+        if (adList.contains(advert)) return false;
         adList.add(advert);
         try (
-                FileOutputStream out = new FileOutputStream(adListPath, true);
+                FileOutputStream out = new FileOutputStream(adListPath);
                 ObjectOutput output = new ObjectOutputStream(out)
         ) {
-            output.writeObject(advert);
+            output.writeObject(adList);
         } catch (IOException e) {
-            System.out.println("Exception has happened");
+            System.out.println("Exception has happened in addAdvert");
             return false;
         }
         return true;
@@ -55,9 +50,8 @@ public class AdServiceImpl implements AdService {
                 OutputStream out = new FileOutputStream(adListPath);
                 ObjectOutput output = new ObjectOutputStream(out)
         ) {
-            for (Ad advert : adList) {
-                output.writeObject(advert);
-            }
+            adList.remove(ad);
+            output.writeObject(adList);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

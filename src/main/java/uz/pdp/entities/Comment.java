@@ -9,6 +9,7 @@ import java.util.List;
 
 @Data
 public class Comment implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7365022467349960924L;
     static int temp = 0;
 

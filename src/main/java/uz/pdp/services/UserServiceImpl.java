@@ -9,26 +9,24 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 
 public class UserServiceImpl implements UserService {
+    private List<User> users;
+
     public UserServiceImpl() {
         try (
                 FileInputStream in = new FileInputStream(usersPath);
                 ObjectInput input = new ObjectInputStream(in)
         ) {
-            while (true) {
-                try {
-                    Object user = input.readObject();
-                    users.add((User) user);
-                }catch (EOFException e){
-                    break;
-                }
-            }
+            Object userInput = input.readObject();
+            users = (List<User>) userInput;
+        } catch (EOFException e) {
+            users = new ArrayList<>();
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Exception in User Service Impl Constructor");
-            e.printStackTrace();
+            System.out.println("Exception in User Service Impl constructor");
         }
     }
 
@@ -48,11 +46,11 @@ public class UserServiceImpl implements UserService {
             }
         }
         try (
-                FileOutputStream out = new FileOutputStream(usersPath, true);
+                FileOutputStream out = new FileOutputStream(usersPath);
                 ObjectOutput output = new ObjectOutputStream(out)
         ) {
             users.add(user);
-            output.writeObject(user);
+            output.writeObject(users);
         } catch (IOException e) {
             System.out.println("Exception has happened");
             return false;
@@ -70,9 +68,7 @@ public class UserServiceImpl implements UserService {
                 OutputStream out = new FileOutputStream(usersPath);
                 ObjectOutput output = new ObjectOutputStream(out)
         ) {
-            for (User user1 : users) {
-                output.writeObject(user1);
-            }
+            output.writeObject(users);
         } catch (IOException e) {
             System.out.println("Exception in User Service Impl remove user");
         }

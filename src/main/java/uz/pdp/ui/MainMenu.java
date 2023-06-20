@@ -17,7 +17,7 @@ public class MainMenu {
     static Scanner scannerInt = new Scanner(System.in);
     static AdService adService = new AdServiceImpl();
     static UserService userService = new UserServiceImpl();
-    static CommentService commentService=new CommentServiceImpl();
+    static CommentService commentService = new CommentServiceImpl();
     static int chances = 3;
 
     public static void menu(User user) {
@@ -30,7 +30,7 @@ public class MainMenu {
                     3.Settings
                     4.Log out
                     """);
-            switch (scanner.next()) {
+            switch (scannerInt.next()) {
                 case "1" -> AdMenu.menu(currentUser);
                 case "2" -> managementOfAds();
                 case "3" -> settings();
@@ -51,7 +51,7 @@ public class MainMenu {
                     4.Your comments
                     5.Back
                     """);
-            switch (scanner.next()) {
+            switch (scannerInt.next()) {
                 case "1" -> changeName();
                 case "2" -> changePassword();
                 case "3" -> changeEmail();
@@ -126,9 +126,12 @@ public class MainMenu {
         if (ans.equalsIgnoreCase("Y")) {
             System.out.print("Enter your new NickName: ");
             String name = scanner.nextLine();
-            if (name.isBlank()) {
+            if (!name.isBlank()) {
                 currentUser.setNickName(name);
                 System.out.println("You have successfully changed your NickName to " + name);
+                System.out.println(currentUser);
+            } else {
+                System.out.println("Something went wrong");
             }
         }
     }
@@ -144,7 +147,7 @@ public class MainMenu {
 
     private static void managementOfAds() {
         boolean hasAds = false;
-        for (Ad ad : AdServiceImpl.getAdList()) {
+        for (Ad ad : adService.getAdList()) {
             if (ad.getUser_id() == currentUser.getId()) {
                 adService.displayAdvert(ad.getId());
                 hasAds = true;
@@ -165,7 +168,7 @@ public class MainMenu {
                     3. Editing your ad
                     4.Exit
                     """);
-            switch (scanner.next()) {
+            switch (scannerInt.next()) {
                 case "1" -> addAdvert();
                 case "2" -> removeAdvert();
                 case "3" -> editAd();

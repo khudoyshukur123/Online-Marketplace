@@ -20,6 +20,10 @@ public class AdMenu {
     static AdService adService = new AdServiceImpl();
     static CommentService commentService = new CommentServiceImpl();
 
+    static {
+        adService.addAdvert(new Ad("Iphone 12", "brand new iphone 12 for sale", Category.GADGETS, 1, 0));
+    }
+
     public static void menu(User user) {
         currentUser = user;
         while (true) {
@@ -42,7 +46,7 @@ public class AdMenu {
     }
 
     private static void printAds(Category category) {
-        List<Ad> adList = AdServiceImpl.getAdList();
+        List<Ad> adList = adService.getAdList();
         for (Ad ad : adList) {
             if (ad.getCategory() == category) {
                 System.out.println(ad.getTitle() + " ID: " + ad.getId());

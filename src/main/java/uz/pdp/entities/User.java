@@ -1,8 +1,10 @@
 package uz.pdp.entities;
 
 import lombok.Data;
+import uz.pdp.services.UserService;
 
-import java.io.Serializable;
+import java.io.*;
+import java.util.List;
 
 @Data
 public class User implements Serializable {
@@ -14,11 +16,24 @@ public class User implements Serializable {
     private String password;
     private int id;
 
+    static {
+        try (
+                InputStream in = new FileInputStream(UserService.usersPath);
+                ObjectInput input = new ObjectInputStream(in)
+        ) {
+            List<User> users = (List<User>) input.readObject();
+            temp = users.get(users.size() - 1).getId();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Exception in User static method");
+        }
+
+    }
+
     public User(String firstName, String email, String password) {
         this.firstName = firstName;
         this.email = email;
         this.password = password;
-        this.nickName=firstName;
+        this.nickName = firstName;
         temp++;
         id = temp;
     }
