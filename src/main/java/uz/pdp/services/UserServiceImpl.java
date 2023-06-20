@@ -19,12 +19,16 @@ public class UserServiceImpl implements UserService {
                 ObjectInput input = new ObjectInputStream(in)
         ) {
             while (true) {
-                Object user = input.readObject();
-                if (user == null) break;
-                users.add((User) user);
+                try {
+                    Object user = input.readObject();
+                    users.add((User) user);
+                }catch (EOFException e){
+                    break;
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
-
+            System.out.println("Exception in User Service Impl Constructor");
+            e.printStackTrace();
         }
     }
 
@@ -70,7 +74,7 @@ public class UserServiceImpl implements UserService {
                 output.writeObject(user1);
             }
         } catch (IOException e) {
-
+            System.out.println("Exception in User Service Impl remove user");
         }
         return true;
     }

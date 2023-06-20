@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserService {
     List<User> users = new ArrayList<>();
-    String password = "password";
+    String password = "gfafyjwtgqnidfrz";
     String senderEmail = "khudoshukur7@gmail.com";
     String emailPath = "C:\\Users\\user\\OneDrive\\Рабочий стол\\G25\\JAVA Development\\4 module\\Online marketplace\\src\\main\\html\\email.html";
 

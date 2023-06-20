@@ -2,7 +2,6 @@ package uz.pdp.services;
 
 import uz.pdp.entities.Ad;
 import uz.pdp.entities.Category;
-import uz.pdp.entities.User;
 
 import java.io.*;
 import java.util.List;
@@ -87,14 +86,14 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public boolean changeAdver(int id, Ad changedAdvert) {
+    public boolean changeAdvert(int id, Ad changedAdvert) {
         removeAdvert(id);
         addAdvert(changedAdvert);
         return true;
     }
 
     @Override
-    public boolean increLike(int idOfAdvert) {
+    public boolean incrLike(int idOfAdvert) {
         Ad ad = getAd(idOfAdvert);
         if (ad == null) return false;
         ad.setCountOfLikes(ad.getCountOfLikes() + 1);

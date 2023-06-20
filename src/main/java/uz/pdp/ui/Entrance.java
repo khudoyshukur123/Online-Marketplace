@@ -58,7 +58,9 @@ public class Entrance {
         User user = userService.getUser(email, password);
         if (user != null) {
             System.out.println("You are found in db");
-            AdMenu.menu(user);
+            MainMenu.menu(user);
+        } else {
+            System.out.println("Credentials are wrong");
         }
     }
 
@@ -96,7 +98,7 @@ public class Entrance {
         if (userService.addUser(user)) {
             System.out.println("We have sent you email pls check");
             Random random = new Random();
-            String passcode = String.valueOf(random.nextInt(9999) + 1000);
+            String passcode = String.valueOf(random.nextInt(8999) + 1000);
             new Thread(() -> {
                 try {
                     System.out.println("Sending message to the email...");
@@ -108,11 +110,10 @@ public class Entrance {
             System.out.print("Please enter the code that is sent to your email: ");
             String passcodeIn = scanner1.nextLine();
             if (passcodeIn.equals(passcode)) {
-                System.out.println("You have successfully registered and authentificated!!!");
-                AdMenu.menu(user);
+                System.out.println("You have successfully registered and authenticated!!!");
+                MainMenu.menu(user);
             }
         } else System.out.println("error");
     }
-
 }
 

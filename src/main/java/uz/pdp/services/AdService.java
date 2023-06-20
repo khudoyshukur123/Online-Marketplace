@@ -1,7 +1,6 @@
 package uz.pdp.services;
 
 import uz.pdp.entities.Ad;
-import uz.pdp.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +13,11 @@ public interface AdService {
 
     void displayAdvert(int id);
 
-    boolean changeAdver(int id, Ad changedAdvert);
+    boolean changeAdvert(int id, Ad changedAdvert);
 
-    boolean increLike(int idOfAdvert);
+    boolean incrLike(int idOfAdvert);
 
     boolean removeAdvert(int id);
+
     Ad getAd(int idOfAdvert);
 }

@@ -23,9 +23,4 @@ public class Ad implements Serializable {
         temp++;
         id = temp;
     }
-
-    public Ad() {
-        temp++;
-        id = temp;
-    }
 }

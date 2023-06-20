@@ -17,7 +17,7 @@ public class MainMenu {
     static Scanner scannerInt = new Scanner(System.in);
     static AdService adService = new AdServiceImpl();
     static UserService userService = new UserServiceImpl();
-    static CommentService commentService = new CommentServiceImpl();
+    static CommentService commentService=new CommentServiceImpl();
     static int chances = 3;
 
     public static void menu(User user) {
@@ -80,7 +80,7 @@ public class MainMenu {
             }
             currentUser.setEmail(newEmail);
             Random random = new Random();
-            String passcode = String.valueOf(random.nextInt(9999) + 1000);
+            String passcode = String.valueOf(random.nextInt(8999) + 1000);
             userService.sendEmail(currentUser, passcode);
             System.out.println("We have sent you email pls check");
             System.out.print("Please enter the code that is sent to your email: ");
@@ -95,7 +95,6 @@ public class MainMenu {
     }
 
     private static void changePassword() {
-        String oldPass;
         System.out.println("Are you sure you want to change your password: ");
         System.out.print("Y/N: ");
         String ans = scanner.nextLine();
@@ -113,9 +112,9 @@ public class MainMenu {
             if (pattern.matcher(newPassword).matches()) {
                 currentUser.setPassword(newPassword);
                 System.out.println("You have successfully changed you Password to " + newPassword);
-                return;
+            } else {
+                System.out.println("Something went wrong. Try again.");
             }
-            System.out.println("Something went wrong. Try again.");
         }
     }
 
@@ -136,7 +135,7 @@ public class MainMenu {
 
     private static void commentSection() {
         System.out.println("Your comments: ");
-        for (Comment comment : CommentService.getComments()) {
+        for (Comment comment : commentService.getComments()) {
             if (comment.getUser_id() == currentUser.getId()) {
                 System.out.println(comment);
             }
@@ -163,17 +162,23 @@ public class MainMenu {
                     Please choose one of them
                     1.Adding another advertisement to the site
                     2.Removing one of your advertisement from the site
-                    3.Exit
+                    3. Editing your ad
+                    4.Exit
                     """);
             switch (scanner.next()) {
                 case "1" -> addAdvert();
                 case "2" -> removeAdvert();
-                case "3" -> {
+                case "3" -> editAd();
+                case "4" -> {
                     return;
                 }
                 default -> System.out.println("This is not valid command");
             }
         }
+    }
+
+    private static void editAd() {
+        System.out.println("Which add you want to remove: ");
     }
 
     private static void removeAdvert() {
@@ -193,31 +198,29 @@ public class MainMenu {
             title = scanner.nextLine();
             if (title.toCharArray().length > 50) {
                 System.out.println("Your title should not be more than 50 characters!!!");
+                continue;
+            }
+            if (title.isBlank()) {
+                System.out.println("Title should not be blank");
             }
             break;
         }
         System.out.print("Enter your description for the ad: ");
         description = scanner.nextLine();
-        if (title.toCharArray().length > 50) {
-            System.out.println("Your title should not be more than 50 characters!!!");
-        }
-        while (true) {
-            System.out.println("""
-                    Enter the catogory of the good:
-                    1.Gadgets
-                    2.Cosmetics
-                    3.Clothes
-                    """);
-            switch (scannerInt.nextInt()) {
-                case 1 -> category = Category.GADGETS;
-                case 2 -> category = Category.COSMETICS;
-                case 3 -> category = Category.CLOTHES;
-                default -> {
-                    System.out.println("Something went wrong!");
-                    continue;
-                }
+        System.out.println("""
+                Enter the category of the good:
+                1.Gadgets
+                2.Cosmetics
+                3.Clothes
+                """);
+        switch (scannerInt.nextInt()) {
+            case 1 -> category = Category.GADGETS;
+            case 2 -> category = Category.COSMETICS;
+            case 3 -> category = Category.CLOTHES;
+            default -> {
+                System.out.println("Something went wrong!");
+                return;
             }
-            break;
         }
         adService.addAdvert(new Ad(title, description, category, currentUser.getId(), 0));
         System.out.println("You have successfully added new ad to the site!!!");
