@@ -14,7 +14,7 @@ import java.util.Properties;
 
 
 public class UserServiceImpl implements UserService {
-    private List<User> users;
+    static private List<User> users;
 
     public UserServiceImpl() {
         try (
@@ -30,12 +30,30 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public static void synchronizeUsers() {
+        try (
+                OutputStream out = new FileOutputStream(usersPath);
+                ObjectOutput output = new ObjectOutputStream(out);
+                InputStream in = new FileInputStream(usersPath);
+                ObjectInput input = new ObjectInputStream(in)
+        ) {
+            users = (List<User>) input.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public User getUser(int idOfUser) {
         for (User user : users) {
             if (user.getId() == idOfUser) return user;
         }
         return null;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return users;
     }
 
     @Override
@@ -76,9 +94,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String phone, String password) {
+    public User getUser(String email, String password) {
         for (User user : users) {
-            if (user.getPassword().equals(password) && user.getEmail().equals(phone)) {
+            if (user.getPassword().equals(password) && user.getEmail().equals(email)) {
                 return user;
             }
         }

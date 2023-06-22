@@ -8,13 +8,7 @@ import java.util.List;
 
 @Data
 public class Ad implements Serializable {
-    static int temp;
-    private int id;
-    private String title;
-    private String description;
-    private Category category;
-    private int user_id;
-    private int countOfLikes;
+    private static int temp;
 
     static {
         try (
@@ -26,15 +20,23 @@ public class Ad implements Serializable {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Exception in Ad static method");
         }
-
     }
 
-    public Ad(String title, String description, Category category, int user_id, int countOfLikes) {
+    private int id;
+    private String title;
+    private String description;
+    private Category category;
+    private int user_id;
+    private double price;
+    private int countOfLikes;
+
+    public Ad(String title, String description, Category category, int user_id, int countOfLikes, double price) {
         this.title = title;
         this.description = description;
         this.category = category;
         this.user_id = user_id;
         this.countOfLikes = countOfLikes;
+        this.price = price;
         temp++;
         id = temp;
     }

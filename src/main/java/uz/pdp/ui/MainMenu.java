@@ -85,9 +85,13 @@ public class MainMenu {
             System.out.println("We have sent you email pls check");
             System.out.print("Please enter the code that is sent to your email: ");
             String input = scanner.nextLine();
-            if (passcode.equals(input))
+            if (passcode.equals(input)) {
+                currentUser.setEmail(oldEmail);
+                userService.removeUser(currentUser);
+                currentUser.setEmail(newEmail);
+                userService.addUser(currentUser);
                 System.out.println("You have successfully changed you email to " + newEmail);
-            else {
+            } else {
                 currentUser.setEmail(oldEmail);
                 System.out.println("error");
             }
@@ -110,7 +114,9 @@ public class MainMenu {
             String newPassword = scanner.nextLine();
             Pattern pattern = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%&*<>])(?=.*[a-z]).{8,}$");
             if (pattern.matcher(newPassword).matches()) {
+                userService.removeUser(currentUser);
                 currentUser.setPassword(newPassword);
+                userService.addUser(currentUser);
                 System.out.println("You have successfully changed you Password to " + newPassword);
             } else {
                 System.out.println("Something went wrong. Try again.");
@@ -127,7 +133,9 @@ public class MainMenu {
             System.out.print("Enter your new NickName: ");
             String name = scanner.nextLine();
             if (!name.isBlank()) {
+                userService.removeUser(currentUser);
                 currentUser.setNickName(name);
+                userService.addUser(currentUser);
                 System.out.println("You have successfully changed your NickName to " + name);
                 System.out.println(currentUser);
             } else {
@@ -225,7 +233,7 @@ public class MainMenu {
                 return;
             }
         }
-        adService.addAdvert(new Ad(title, description, category, currentUser.getId(), 0));
+        adService.addAdvert(new Ad(title, description, category, currentUser.getId(), 0, 8));
         System.out.println("You have successfully added new ad to the site!!!");
     }
 }

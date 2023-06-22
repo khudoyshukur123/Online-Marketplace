@@ -19,11 +19,6 @@ public class AdMenu {
     static Scanner scannerInt = new Scanner(System.in);
     static AdService adService = new AdServiceImpl();
     static CommentService commentService = new CommentServiceImpl();
-
-    static {
-        adService.addAdvert(new Ad("Iphone 12", "brand new iphone 12 for sale", Category.GADGETS, 1, 0));
-    }
-
     public static void menu(User user) {
         currentUser = user;
         while (true) {

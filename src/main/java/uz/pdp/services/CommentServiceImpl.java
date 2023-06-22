@@ -35,19 +35,18 @@ public class CommentServiceImpl implements CommentService {
     public boolean addComment(Comment comment) {
         try (
                 FileOutputStream out = new FileOutputStream(commentsPath);
-                ObjectOutput output = new ObjectOutputStream(out);
-                FileInputStream in = new FileInputStream(commentsPath);
-                ObjectInput input = new ObjectInputStream(in)
+                ObjectOutput output = new ObjectOutputStream(out)
         ) {
             comments.add(comment);
             output.writeObject(comments);
-            comments = (List<Comment>) input.readObject();
+//            comments = (List<Comment>) input.readObject();
         } catch (IOException e) {
             System.out.println("Exception has happened in addComment");
             return false;
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
         return true;
     }
 
@@ -85,7 +84,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void displayComment(int adId) {
-        if (comments.isEmpty()) return;
+        if (comments.isEmpty()) {
+            System.out.println("No comments yet");
+            return;
+        }
         for (Comment comment : comments) {
             if (comment.getAd_id() == adId && comment.getParent_comment_id() == 0) {
                 System.out.println(comment.getComment_text() + "  " + comment.getTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")) + ", id: " + comment.getId());
