@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "title": "Iphone 12",
+    "description": "brand new iphone 12 for sale",
+    "category": "GADGETS",
+    "user_id": 1,
+    "price": 8.0,
+    "countOfLikes": 0
+  }
+]

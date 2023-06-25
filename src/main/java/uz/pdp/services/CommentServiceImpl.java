@@ -1,26 +1,30 @@
 package uz.pdp.services;
 
+import com.google.gson.reflect.TypeToken;
 import uz.pdp.entities.Comment;
 
-import java.io.*;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommentServiceImpl implements CommentService {
-    List<Comment> comments;
-    UserService userService = new UserServiceImpl();
+    private final UserService userService = new UserServiceImpl();
+    private List<Comment> comments;
 
     public CommentServiceImpl() {
-        try (
-                FileInputStream in = new FileInputStream(commentsPath);
-                ObjectInput input = new ObjectInputStream(in)
-        ) {
-            Object inputList = input.readObject();
-            comments = (List<Comment>) inputList;
-        } catch (EOFException e) {
-            comments = new ArrayList<>();
-        } catch (IOException | ClassNotFoundException e) {
+        try {
+            String inputComments = Files.readString(commentsPath);
+            if (inputComments.isBlank()) {
+                comments = new ArrayList<>();
+                return;
+            }
+            Type typeOfInput = new TypeToken<ArrayList<Comment>>() {
+            }.getType();
+            comments = gson.fromJson(inputComments, typeOfInput);
+        } catch (IOException e) {
             System.out.println("Exception in Comment Service Impl");
         }
 
@@ -33,20 +37,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public boolean addComment(Comment comment) {
-        try (
-                FileOutputStream out = new FileOutputStream(commentsPath);
-                ObjectOutput output = new ObjectOutputStream(out)
-        ) {
+        try {
             comments.add(comment);
-            output.writeObject(comments);
-//            comments = (List<Comment>) input.readObject();
+            String json = gson.toJson(comments);
+            Files.writeString(commentsPath, json);
         } catch (IOException e) {
             System.out.println("Exception has happened in addComment");
             return false;
         }
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
         return true;
     }
 
@@ -56,12 +54,10 @@ public class CommentServiceImpl implements CommentService {
         for (Comment comment : comments) {
             if (comment.getId() == id) {
                 comments.remove(comment);
-                try (
-                        FileOutputStream out = new FileOutputStream(commentsPath);
-                        ObjectOutput output = new ObjectOutputStream(out)
-                ) {
+                try {
                     comments.add(comment);
-                    output.writeObject(comments);
+                    String json = gson.toJson(comments);
+                    Files.writeString(commentsPath, json);
                 } catch (IOException e) {
                     System.out.println("Exception has happened in removeComment");
                     return false;

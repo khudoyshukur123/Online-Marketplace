@@ -1,11 +1,13 @@
 package uz.pdp.services;
 
+import com.google.gson.reflect.TypeToken;
 import uz.pdp.entities.User;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.*;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,32 +16,18 @@ import java.util.Properties;
 
 
 public class UserServiceImpl implements UserService {
-    static private List<User> users;
+    private List<User> users;
 
     public UserServiceImpl() {
-        try (
-                FileInputStream in = new FileInputStream(usersPath);
-                ObjectInput input = new ObjectInputStream(in)
-        ) {
-            Object userInput = input.readObject();
-            users = (List<User>) userInput;
-        } catch (EOFException e) {
-            users = new ArrayList<>();
-        } catch (IOException | ClassNotFoundException e) {
+        try {
+            String userInput = Files.readString(usersPath);
+            if (!userInput.isBlank()) {
+                Type targetClassType = new TypeToken<ArrayList<User>>() {
+                }.getType();
+                users = gson.fromJson(userInput, targetClassType);
+            } else users = new ArrayList<>();
+        } catch (IOException e) {
             System.out.println("Exception in User Service Impl constructor");
-        }
-    }
-
-    public static void synchronizeUsers() {
-        try (
-                OutputStream out = new FileOutputStream(usersPath);
-                ObjectOutput output = new ObjectOutputStream(out);
-                InputStream in = new FileInputStream(usersPath);
-                ObjectInput input = new ObjectInputStream(in)
-        ) {
-            users = (List<User>) input.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -63,12 +51,10 @@ public class UserServiceImpl implements UserService {
                 return false;
             }
         }
-        try (
-                FileOutputStream out = new FileOutputStream(usersPath);
-                ObjectOutput output = new ObjectOutputStream(out)
-        ) {
+        try {
             users.add(user);
-            output.writeObject(users);
+            String json = gson.toJson(users);
+            Files.writeString(usersPath, json);
         } catch (IOException e) {
             System.out.println("Exception has happened");
             return false;
@@ -82,11 +68,9 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         users.remove(user);
-        try (
-                OutputStream out = new FileOutputStream(usersPath);
-                ObjectOutput output = new ObjectOutputStream(out)
-        ) {
-            output.writeObject(users);
+        try {
+            String json = gson.toJson(users);
+            Files.writeString(usersPath, json);
         } catch (IOException e) {
             System.out.println("Exception in User Service Impl remove user");
         }

@@ -1,15 +1,20 @@
 package uz.pdp.services;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import uz.pdp.entities.User;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public interface UserService {
-    String password = "password";
+    String password = "gfafyjwtgqnidfrz";
     String senderEmail = "khudoshukur7@gmail.com";
     String emailPath = "src\\main\\html\\email.html";
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    String usersPath = "src\\main\\resources\\usersDB.txt";
+
+    Path usersPath = Path.of("src\\main\\resources\\usersDB.json");
 
     List<User> getUsers();
 

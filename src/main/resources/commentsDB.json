@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "comment_text": "1 comment",
+    "ad_id": 1,
+    "user_id": 1,
+    "countOfLikes": 0,
+    "parent_comment_id": 0,
+    "time": "25::Jun::2023 21::34::12",
+    "level_Of_Relation": 0
+  },
+  {
+    "id": 2,
+    "comment_text": "2 comment",
+    "ad_id": 1,
+    "user_id": 1,
+    "countOfLikes": 0,
+    "parent_comment_id": 1,
+    "time": "25::Jun::2023 21::34::21",
+    "level_Of_Relation": 1
+  },
+  {
+    "id": 3,
+    "comment_text": "3 comment",
+    "ad_id": 1,
+    "user_id": 1,
+    "countOfLikes": 0,
+    "parent_comment_id": 2,
+    "time": "25::Jun::2023 21::34::53",
+    "level_Of_Relation": 2
+  }
+]

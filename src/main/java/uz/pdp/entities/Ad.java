@@ -1,24 +1,30 @@
 package uz.pdp.entities;
 
+import com.google.gson.reflect.TypeToken;
 import lombok.Data;
 import uz.pdp.services.AdService;
 
-import java.io.*;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class Ad implements Serializable {
+public class Ad {
     private static int temp;
 
     static {
-        try (
-                InputStream in = new FileInputStream(AdService.adListPath);
-                ObjectInput input = new ObjectInputStream(in)
-        ) {
-            List<Ad> ads = (List<Ad>) input.readObject();
-            temp = ads.get(ads.size() - 1).getId();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Exception in Ad static method");
+        try {
+            String json = Files.readString(AdService.adListPath);
+            if (!json.isBlank()) {
+                Type type = new TypeToken<ArrayList<Ad>>() {
+                }.getType();
+                List<Ad> ads = AdService.gson.fromJson(json, type);
+                temp = ads.get(ads.size() - 1).getId();
+            }
+        } catch (IOException e) {
+            System.out.println("Exception in Comment static method");
         }
     }
 
@@ -37,7 +43,10 @@ public class Ad implements Serializable {
         this.user_id = user_id;
         this.countOfLikes = countOfLikes;
         this.price = price;
-        temp++;
-        id = temp;
+        id = ++temp;
+    }
+
+    public Ad() {
+        this.id = ++temp;
     }
 }

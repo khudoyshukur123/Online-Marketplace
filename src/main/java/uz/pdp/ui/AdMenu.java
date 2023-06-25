@@ -19,6 +19,7 @@ public class AdMenu {
     static Scanner scannerInt = new Scanner(System.in);
     static AdService adService = new AdServiceImpl();
     static CommentService commentService = new CommentServiceImpl();
+
     public static void menu(User user) {
         currentUser = user;
         while (true) {

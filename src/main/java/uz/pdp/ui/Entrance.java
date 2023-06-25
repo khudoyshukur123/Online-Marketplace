@@ -105,6 +105,7 @@ public class Entrance {
                     userService.sendEmail(user, passcode);
                 } catch (Exception e) {
                     System.out.println("Something went wrong!");
+                    e.printStackTrace();
                 }
             }).start();
             System.out.print("Please enter the code that is sent to your email: ");

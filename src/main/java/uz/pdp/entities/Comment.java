@@ -1,26 +1,34 @@
 package uz.pdp.entities;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import lombok.Data;
 import uz.pdp.services.CommentService;
 
-import java.io.*;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class Comment implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -7365022467349960924L;
+public class Comment {
     static int temp = 0;
+    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     static {
-        try (
-                InputStream in = new FileInputStream(CommentService.commentsPath);
-                ObjectInput input = new ObjectInputStream(in)
-        ) {
-            List<Comment> comments = (List<Comment>) input.readObject();
-            temp = comments.get(comments.size() - 1).getId();
-        } catch (IOException | ClassNotFoundException e) {
+
+        try {
+            String json = Files.readString(CommentService.commentsPath);
+            if (!json.isBlank()) {
+                Type type = new TypeToken<ArrayList<Comment>>() {
+                }.getType();
+                List<Comment> comments = Comment.gson.fromJson(json, type);
+                temp = comments.get(comments.size() - 1).getId();
+            }
+        } catch (IOException e) {
             System.out.println("Exception in Comment static method");
         }
 

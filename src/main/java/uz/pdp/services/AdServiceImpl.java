@@ -1,8 +1,11 @@
 package uz.pdp.services;
 
+import com.google.gson.reflect.TypeToken;
 import uz.pdp.entities.Ad;
 
-import java.io.*;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,15 +13,14 @@ public class AdServiceImpl implements AdService {
     List<Ad> adList;
 
     public AdServiceImpl() {
-        try (
-                FileInputStream in = new FileInputStream(adListPath);
-                ObjectInput input = new ObjectInputStream(in)
-        ) {
-            Object ads = input.readObject();
-            adList = (List<Ad>) ads;
-        } catch (EOFException e) {
-            adList = new ArrayList<>();
-        } catch (IOException | ClassNotFoundException e) {
+        try {
+            String json = Files.readString(adListPath);
+            if (!json.isBlank()) {
+                Type type = new TypeToken<ArrayList<Ad>>() {
+                }.getType();
+                adList = gson.fromJson(json, type);
+            } else adList = new ArrayList<>();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -30,13 +32,12 @@ public class AdServiceImpl implements AdService {
     public boolean addAdvert(Ad advert) {
         if (adList.contains(advert)) return false;
         adList.add(advert);
-        try (
-                FileOutputStream out = new FileOutputStream(adListPath);
-                ObjectOutput output = new ObjectOutputStream(out)
-        ) {
-            output.writeObject(adList);
+        try {
+            adList.add(advert);
+            String json = gson.toJson(adList);
+            Files.writeString(adListPath, json);
         } catch (IOException e) {
-            System.out.println("Exception has happened in addAdvert");
+            System.out.println("Exception has happened");
             return false;
         }
         return true;
@@ -46,14 +47,11 @@ public class AdServiceImpl implements AdService {
     public boolean removeAdvert(int id) {
         Ad ad = getAd(id);
         if (ad == null) return false;
-        try (
-                OutputStream out = new FileOutputStream(adListPath);
-                ObjectOutput output = new ObjectOutputStream(out)
-        ) {
-            adList.remove(ad);
-            output.writeObject(adList);
+        try {
+            String json = gson.toJson(adList);
+            Files.writeString(adListPath, json);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Exception in User AdService Impl remove user");
         }
         return true;
     }
